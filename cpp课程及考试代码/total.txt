@@ -1,0 +1,203 @@
+1.
+#include <iostream> 
+using namespace std;
+class A{	
+protected:
+		int a;
+public:
+		A(int p1) { a=p1; }
+		int inc1(void) { return ++a; }	};
+class B1:public A{	
+protected:	int b1;
+public:	B1(int p1,int p2):A(p1) { b1=p2; }
+			int inc1(void) { return A::inc1(); }
+			void display(void) { cout<<"a="<<a<<" b1="<<b1<<"\n"; }	};
+class B2:public A{	
+private:	int b2;
+public:	B2(int p1,int p3):A(p1) { b2=p3; }
+			int inc1(void) { A::inc1(); A::inc1(); return A::inc1(); }
+			void display(void) { cout<<"a="<<a<<" b2="<<b2<<"\n"; }	};
+class C:private B1,public B2{	
+private:	int c;
+public:	C(int p11,int p12,int p21,int p22,int p):B1(p11,p12),B2(p21,p22)
+			{ c=p; }
+	int inc1(void) { return B2::inc1(); }
+	void display(void) { B1::display(); B2::display(); cout<<"c="<<c<<"\n";} };
+int main(void){	
+	C d(1,2,3,4,5);		cout<<"\n";		d.display();		cout<<"\n";
+	d.inc1();			d.display();	return 0; }
+
+//以下为答案
+//
+// a=1 b1=2
+// a=3 b2=4
+// c=5
+
+// a=1 b1=2
+// a=6 b2=4
+// c=5
+
+2.
+#include  <iostream>
+using namespace std;
+template<class T>
+class Tclass{
+	T x,y;
+public:
+    Tclass (T a,T b):x(a) { y=b; }
+    Tclass (T a) { y=(T)0, x=a; }
+    void pr( )	{	char c;        c=(y>=(T)0)? '+':'-';
+        cout<<x<<c<< (y>(T)0 ?  y : -y) <<"i"<<endl;  }   };
+int main( ){
+     Tclass<double>  a(10.5,-5.8);     a.pr( );
+     Tclass<int>  b(10);     b.pr( );	return 0;   }
+
+//以下为答案
+// 10.5-5.8i
+// 10+0i
+
+3.
+#include <fstream>
+#include <iostream>
+#include <vector>
+using namespace std;
+int main ()
+{     vector<vector<int> > datas;
+       ifstream  ifs("test.dat");
+       int    m,   n;
+       ifs >> m >> n;
+       int    i, j;
+       for (i = 0; i < m; i ++) {
+              vector<int>  V;
+              for (j = 0; j < n; j ++ ) { int x; ifs>>x; V.push_back(x); }
+              datas.push_back (V);    }
+       for (i = 0; i < m; i ++) {
+              for (j = 0 ;j < n; j ++) { cout << datas [i][j]<< " ";}
+              cout << endl;  }
+}
+
+//答案
+// 1 2 3 4 
+// 5 6 7 8 
+// 9 10 11 12 
+
+4.
+#include <iostream>
+using namespace std;
+class CAT
+{ public:  CAT(){ itsAge=new int;	*itsAge=5;}
+		  ~CAT(){ delete itsAge;	itsAge=NULL;}
+		  int GetAge(){ return *itsAge; }
+		  void SetAge(int age) { *itsAge=age; }
+  protected:  int *itsAge;   };
+int main()
+{ CAT a;  cout<<"a's age:"<<a.GetAge()<<endl; 	a.SetAge(6);	
+CAT b(a); cout<<"a's age:"<<a.GetAge()<<endl;	
+cout<<"b's age:"<<b.GetAge()<<endl; a.SetAge(7);
+cout<<"a's age:"<<a.GetAge()<<endl; cout<<"b's age:"<<b.GetAge()<<endl; }
+
+//答案
+// a's age:5
+// a's age:6
+// b's age:6
+// a's age:7
+// b's age:7
+
+5.
+#include <iostream>
+using namespace std;
+#include <string>
+class Base
+{ private:   char msg[30];
+  protected: int n;
+  public: Base(char s[],int m=0):n(m) {  strcpy(msg,s); }
+  	void output(void)  {  cout<<n<<endl<<msg<<endl;  }  };
+class Derived1:public Base
+{ private:	int n;
+  public:	Derived1 (int m=1): Base("Base",m-1) {  n=m; }
+	void output(void) { cout<<n<<endl; Base::output();}  };
+class Derived2:public Derived1
+{ private:	int n;
+  public:	Derived2(int m=2):Derived1(m-1) { n=m; }
+	void output(void) { cout<<n<<endl; Derived1::output();} };
+int main()
+{ Base B("Base Class",1); Derived2 D; B.output(); D.output();}
+
+//答案
+// 1
+// Base Class
+// 2
+// 1
+// 0
+// Base
+
+6.
+#include <iostream>
+using namespace std;
+class Rr
+{ public: Rr(int a){	data=a;}
+    operator int(){	return data;}
+	operator double(){	return double(data);}
+  private:	int data;  };
+int main()
+{	Rr r1(2),r2(4);		int x=int(r1)+int(r2);	
+	double y=double(r1)/double(r2); 	cout<<"x="<<x<<",y="<<y<<endl;
+    return 0;  }
+
+//答案
+// x=6,y=0.5
+
+7.
+#include <iostream>
+using namespace std;
+class sz { 	int intT1;
+public:	sz() { intT1=5;}
+		void Set1(int t) {intT1=t;}
+		int Get1() { return intT1; }   };
+class sz2
+{  public:	sz2() { mszT=new sz(); mszT2=new sz();}
+		sz *f1() { mszT2=new sz(); mszT2->Set1(1); return mszT2; }
+		sz *f2() const { 	return mszT; } 
+		const sz *f3() { return mszT; } 
+		const sz *f4() const {return mszT2;}
+private:
+	   sz *mszT; 
+	   sz *mszT2;  };
+int main()
+{  sz t;    sz2 f;	
+   sz *s1=f.f1(); 			   cout<<s1->Get1()<<endl; 
+   s1->Set1(10);  			   cout<<s1->Get1()<<endl;
+   s1=f.f2();  				   cout<<s1->Get1()<<endl;
+   s1->Set1(20);  			   cout<<s1->Get1()<<endl;	
+   const sz *s2=f.f3();  t=*s2;   cout<<t.Get1()<<endl;  
+   s2=f.f1();			t=*s2;  	   cout<<t.Get1()<<endl;  
+   sz * const s3=f.f1();  t=*s3;  cout<<t.Get1()<<endl; 
+   s3->Set1(30);		   		   cout<<s3->Get1()<<endl;
+   return 0;  }
+   
+//答案：
+// 1
+// 10
+// 5
+// 20
+// 20
+// 1
+// 1
+// 30
+
+8.
+#include <iostream>
+using namespace std;
+class A {  public: virtual void print(int x) {cout <<"A:"<< x << '\t' ;} };
+class B:public A { public: virtual void print(float x) {cout <<"B:"<< x << '\t';} };
+class C:public A{ public: virtual void print(int x) {cout <<"C:"<< x <<endl;} };
+void show(A &a) { a.print(3);  }
+int main( )
+{	A a;	B b;	C c;
+	a.print(1);		b.print(2);		c.print(3);
+	show(a);  show(b);  show(c);  return 0;}
+
+
+//答案：
+// A:1	B:2	C:3
+// A:3	A:3	C:3
